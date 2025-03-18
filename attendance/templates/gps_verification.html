@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GPS Verification</title>
+</head>
+<body>
+    <h2>Verifying Location...</h2>
+    <p id="status">Checking your location...</p>
+
+    <script>
+        function checkLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    fetch(`/check-location?lat=${lat}&lng=${lng}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'allowed') {
+                                window.location.href = "/scan-qr/";
+                            } else {
+                                document.getElementById("status").innerHTML = 
+                                    `You are too far (${data.distance} meters away). Move closer to the lecture hall.`;
+                            }
+                        });
+                }, () => {
+                    document.getElementById("status").innerHTML = "Unable to retrieve location.";
+                });
+            } else {
+                document.getElementById("status").innerHTML = "Geolocation is not supported.";
+            }
+        }
+
+        checkLocation();
+    </script>
+</body>
+</html>

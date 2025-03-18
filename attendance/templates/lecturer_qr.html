@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lecture QR Code</title>
+    <script>
+        function fetchQRCode() {
+            fetch(`/generate-qr/{{ lecture.id }}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("qr-code").src = `data:image/png;base64,${data.qr_code}`;
+                    document.getElementById("expires").innerText = `Expires at: ${data.expires_at}`;
+                });
+        }
+
+        fetchQRCode();  // Load QR code initially
+        setInterval(fetchQRCode, 600000);  // Refresh every 10 mins
+    </script>
+</head>
+<body>
+    <h2>Lecture QR Code</h2>
+    <img id="qr-code" alt="QR Code will appear here">
+    <p id="expires">Loading...</p>
+</body>
+</html>
