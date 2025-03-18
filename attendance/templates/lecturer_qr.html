@@ -5,7 +5,7 @@
     <title>Lecture QR Code</title>
     <script>
         function fetchQRCode() {
-            fetch(`/generate-qr/{{ lecture.id }}/`)
+            fetch(`/generate-qr-code/{{ lecture.id }}/`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("qr-code").src = `data:image/png;base64,${data.qr_code}`;

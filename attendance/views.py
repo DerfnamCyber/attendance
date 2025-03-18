@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from geopy.distance import geodesic
+from .models import Lecture, Attendance
+import openpyxl
 import json
 from .models import Lecture
 import qrcode
@@ -12,7 +14,7 @@ import base64
 LECTURE_HALL_LOCATION = (37.7749, -122.4194)
 
 def home(request):
-    return render(request, 'gps_verification.html')
+    return render(request, 'lecturer_qr.html')
 
 def generate_qr_code(request, lecture_id):
     lecture = get_object_or_404(Lecture, id=lecture_id)
@@ -67,4 +69,42 @@ def mark_attendance(request):
 
         return JsonResponse({'status': 'error', 'message': 'Invalid or expired QR Code!'})
 
-        
+
+@login_required
+def attendance_report(request):
+    if not request.user.is_staff:  # Only lecturers can access
+        return render(request, 'error.html', {'message': 'Access Denied'})
+
+    lectures = Lecture.objects.all()
+    selected_lecture = request.GET.get('lecture')
+    attendance_records = Attendance.objects.filter(lecture_id=selected_lecture) if selected_lecture else None
+
+    return render(request, 'attendance_report.html', {
+        'lectures': lectures,
+        'attendance_records': attendance_records
+    }) 
+
+
+def download_report(request, lecture_id):
+    lecture = Lecture.objects.get(id=lecture_id)
+    attendance_records = Attendance.objects.filter(lecture=lecture)
+
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = "Attendance Report"
+
+    # Headers
+    sheet.append(["Student Name", "Index Number", "Timestamp"])
+
+    # Attendance Data
+    for record in attendance_records:
+        sheet.append([record.student.get_full_name(), record.student.username, record.timestamp])
+
+    # Response as Excel file
+    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response["Content-Disposition"] = f'attachment; filename="Attendance_{lecture.title}.xlsx"'
+    workbook.save(response)
+
+    return response 
+
+     

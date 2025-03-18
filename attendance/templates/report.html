@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Report</title>
+</head>
+<body>
+    <h2>Attendance Report</h2>
+    <form method="GET">
+        <label for="lecture">Select Lecture:</label>
+        <select name="lecture" id="lecture" onchange="this.form.submit()">
+            <option value="">-- Choose Lecture --</option>
+            {% for lecture in lectures %}
+                <option value="{{ lecture.id }}" {% if lecture.id|stringformat:"s" == request.GET.lecture %}selected{% endif %}>
+                    {{ lecture.title }} - {{ lecture.date }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {% if attendance_records %}
+        <h3>Attendance for {{ attendance_records.0.lecture.title }}</h3>
+        <table border="1">
+            <tr>
+                <th>Student</th>
+                <th>Index Number</th>
+                <th>Timestamp</th>
+            </tr>
+            {% for record in attendance_records %}
+            <tr>
+                <td>{{ record.student.get_full_name }}</td>
+                <td>{{ record.student.username }}</td>
+                <td>{{ record.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <a href="{% url 'download_report' request.GET.lecture %}">Download Report (Excel)</a>
+    {% endif %}
+</body>
+</html>
