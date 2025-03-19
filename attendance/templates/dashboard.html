@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Welcome, User : {{ user.username }}</h2>
+    {% for lecture in lectures %}
+    <br><br>
+    <h2> Lecture title : &nbsp;&nbsp;&nbsp;{{ lecture.title }}</h2>
+    
+    {% endfor %}
+    <a href="/proceed/">Proceed to mark Attendance</a>
+</table>
+
+{% endblock %}
+

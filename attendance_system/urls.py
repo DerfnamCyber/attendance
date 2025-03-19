@@ -21,6 +21,6 @@ from attendance.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("attendance/", include("attendance.urls")),
+    path("", include("attendance.urls")),
     path("", home, name="home")
 ]

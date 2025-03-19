@@ -9,29 +9,27 @@
     <p id="status">Checking your location...</p>
 
     <script>
-        function checkLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-
-                    fetch(`/check-location?lat=${lat}&lng=${lng}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'allowed') {
-                                window.location.href = "/scan-qr/";
-                            } else {
-                                document.getElementById("status").innerHTML = 
-                                    `You are too far (${data.distance} meters away). Move closer to the lecture hall.`;
-                            }
-                        });
-                }, () => {
-                    document.getElementById("status").innerHTML = "Unable to retrieve location.";
-                });
-            } else {
-                document.getElementById("status").innerHTML = "Geolocation is not supported.";
-            }
-        }
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            fetch(`/check-location?lat=${lat}&lng=${lng}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "allowed") {
+                    window.location.href = "/scan-qr/";
+                    window.location.href = "/mark-attendance/${lecture_id}";
+                } else {
+                    document.getElementById("status").innerHTML = 
+                    `You are too far (${data.distance} meters away). Move closer to the lecture hall.`;
+                }
+            })
+            .catch(error => {
+                document.getElementById("status").innerHTML = "Server error. Please try again.";
+            });
+        }, error => {
+            document.getElementById("status").innerHTML = 
+                "Failed to get location. Ensure GPS is enabled.";
+        });
 
         checkLocation();
     </script>

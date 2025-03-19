@@ -24,3 +24,17 @@ class Attendance(models.Model):
 
     class Meta:
         unique_together = ('student', 'lecture')  # Prevent duplicate attendance
+
+from django.contrib.auth import authenticate, login
+
+def student_login(request):
+    if request.method == "POST":
+        username = request.POST["username"]  # Index number
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Redirect after login
+        else:
+            messages.error(request, "Invalid credentials")
+    return render(request, 'attendance/login.html')
