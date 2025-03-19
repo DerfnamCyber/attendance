@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <title>Lecture QR Code</title>
         <script>
-            var lecture_id = "{{ lecture_id }}";  // Ensure this variable is set correctly
+            var lecture_id = "{{ lecture_id }}";
           
             function fetchQRCode() {
                 if (!lecture_id) {  
                     console.error("Lecture ID is missing!");  
-                    return;  // Stop execution if lecture_id is not available
+                    return;  
                 }
           
-                fetch(`/generate-qr-code/${lecture_id}/`)  // Corrected URL format
+                fetch(`/generate-qr-code/${lecture_id}/`) 
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("qr-code").src = data["qr-code"];
@@ -22,7 +22,7 @@
                 .catch(error => console.error("Error fetching QR:", error));
             }
           
-            fetchQRCode();  // Load on page load
+            fetchQRCode(); 
             setInterval(fetchQRCode, 600000);  // Refresh every 10 minutes
           </script>
     

@@ -23,13 +23,13 @@ class Attendance(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('student', 'lecture')  # Prevent duplicate attendance
+        unique_together = ('student', 'lecture') 
 
 from django.contrib.auth import authenticate, login
 
-def student_login(request):
+"""def student_login(request):
     if request.method == "POST":
-        username = request.POST["username"]  # Index number
+        username = request.POST["username"]  
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
         if user is not None:
@@ -37,4 +37,4 @@ def student_login(request):
             return redirect('home')  # Redirect after login
         else:
             messages.error(request, "Invalid credentials")
-    return render(request, 'attendance/login.html')
+    return render(request, 'attendance/login.html')"""

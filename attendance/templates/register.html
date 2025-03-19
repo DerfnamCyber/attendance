@@ -2,18 +2,20 @@
 
 {% block content %}
   <div class="register-container">
+            <center>
     <h2>Register</h2>
-
+                <br>
     <form method="post">
         {% csrf_token %}
         <label for="id_username">Index-Number:</label>
-        <input type="Number" name="username" id="id_username" required>
+        <input type="Number" name="username" id="id_username" pattern="^\d{7}$" title="Index Number must be exactly 7 numbers" required>
 
-        <label for="id_password1">Password:</label>
-        <input type="password" name="password1" id="id_password1" required>
+        <label for="id_password1" >Password:</label>
+        <input type="password" name="password1" id="id_password1" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+        title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
 
         <label for="id_password2">Confirm Password:</label>
-        <input type="password" name="password2" id="id_password2" required>
+        <input type="password" name="password2" id="id_password2" title ="Passwords must be the same" required>
 
         <button type="submit">Register</button>
     </form>

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm  # ✅ Import the form
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm 
 from geopy.distance import geodesic
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -16,8 +16,7 @@ import io
 import base64
 from io import BytesIO
 
-# Replace with actual lecture hall coordinates
-LECTURE_HALL_LOCATION = (6.671640973230205, -1.5628947760371927)
+LECTURE_HALL_LOCATION = (6.671640973230205, -1.5628947760371927) #I must write a function for actual coordinates
 
 def home(request):
     return render(request, 'home.html')
@@ -31,6 +30,8 @@ def login(request):
             user = form.get_user()
             auth_login(request, user)
             return render(request, 'gps_verification.html')
+        else:
+            return render(request, "login.html", {"error_message": "Login failed....Invalid Credentials."})
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
@@ -50,18 +51,14 @@ def register(request):
             return render(request, "register.html", {"error_message": "Username is already taken."})
         user = User.objects.create_user(username=username, password=password1)
         user.save()
-        #form = UserCreationForm(request.POST)
-        #if form.is_valid():
-        #    user = form.save()
-        #    auth_login(request, user)
         auth_login(request, user)
-        return redirect('login') #After successful registration
+        return redirect('login') 
         #form = UserCreationForm()
     return render(request, 'register.html')
 
 def logout(request):
-    auth_logout(request)  # ✅ Logs out the user
-    return redirect('login')  # ✅ Redirects to login page
+    auth_logout(request)  
+    return redirect('login')  
 
 
 @login_required
@@ -73,8 +70,6 @@ def generate_qr_code(request, lecture_id):
     lecture = get_object_or_404(Lecture, id=lecture_id)
     lecture.generate_qr_code()
     qr = qrcode.make(f"Lecture {lecture_id}")
-    #qr = qrcode.make(lecture.qr_code)
-    #buffer = io.BytesIO()
     buffer = io.BytesIO()
     qr.save(buffer, format="PNG")
     qr_data = base64.b64encode(buffer.getvalue()).decode()
@@ -91,7 +86,7 @@ def check_location(request):
         user_location = (user_lat, user_lng)
         distance = geodesic(LECTURE_HALL_LOCATION, user_location).meters
         if distance <= 5:
-            request.session['location_verified'] = True  # Store in session
+            request.session['location_verified'] = True
             #return render(request, 'scan_qr.html')
             return JsonResponse({'status': 'allowed', 'distance': round(distance, 2)})
         else:
@@ -108,26 +103,24 @@ def qr_attendance_page(request):
 def mark_attendance(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        student = request.user  # Assuming authentication is by index number
+        student = request.userr
         qr_code_data = data.get("qr_code")
 
         lecture = Lecture.objects.filter(qr_code=qr_code, expires_at_gte=now()).first()
 
         if lecture:
-            # Prevent duplicate attendance
             if Attendance.objects.filter(student=student, lecture=lecture).exists():
                 return JsonResponse({'status': 'error', 'message': 'You have already marked attendance!'})
             
-            # Record attendance
             Attendance.objects.create(student=student, lecture=lecture)
-            return JsonResponse({'status': 'success', 'message': 'Attendance marked successfully!'})
+            return JsonResponse({'status': 'success', 'message': '✅ Attendance marked successfully!'})
 
         return JsonResponse({'status': 'error', 'message': 'Invalid or expired QR Code!'})
 
 
 @login_required
 def attendance_report(request):
-    if not request.user.is_staff:  # Only lecturers can access
+    if not request.user.is_staff:  # Only lecturers
         return render(request, 'error.html', {'message': 'Access Denied'})
 
     lectures = Lecture.objects.all()

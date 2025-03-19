@@ -1,27 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Login</h1>
+  
   <div class="login-container">
-    
+        <center>
+    <h1>Login</h1>
+            <br>
     <form method="post">
         {% csrf_token %}
 
-        <label for="id_username">Username:</label>
-        <input type="text" name="username" id="id_username" required>
+        <label for="id_username">Index-Number:</label>
+        <input type="Number" name="username" id="id_username" pattern="^\d{7}$" 
+            title="Please enter your Index number" required>
 
         <label for="id_password">Password:</label>
-        <input type="password" name="password" id="id_password" required>
+        <input type="password" name="password" id="id_password" title="Enter a valid password" required>
 
         <button type="submit">Login</button>
     </form>
 
     <p>Don't have an account? <a href="/register/">Register</a></p>
+    {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
   </div>
-
-
-
-
 
 <style>
     /* Login form styles */
@@ -38,7 +40,7 @@
         color: #333;
     }
     
-    input[type="text"],
+    input[type="Number"],
     input[type="password"] {
         width: 100%;
         padding: 10px;
@@ -73,73 +75,3 @@
 
 {% endblock %}
 
-
- 
-
-<!--/*
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    Global styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-/* Login form styles */
-form {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    text-align: center;
-}
-
-h1 {
-    color: #333;
-}
-
-input[type="text"],
-input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-p a {
-    text-decoration: none;
-    color: #007bff;
-}
-
-p a:hover {
-    text-decoration: underline;
-}
