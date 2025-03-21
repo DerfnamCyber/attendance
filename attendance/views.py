@@ -103,7 +103,7 @@ def qr_attendance_page(request):
 def mark_attendance(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        student = request.userr
+        student = request.user
         qr_code_data = data.get("qr_code")
 
         lecture = Lecture.objects.filter(qr_code=qr_code, expires_at_gte=now()).first()
