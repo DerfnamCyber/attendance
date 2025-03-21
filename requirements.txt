@@ -1,0 +1,13 @@
+asgiref==3.8.1
+dj-database-url==2.3.0
+Django==5.1.7
+django-mapbox-location-field==2.1.0
+geographiclib==2.0
+geopy==2.4.1
+pillow==11.1.0
+psycopg==3.2.6
+psycopg2-binary==2.9.10
+qrcode==8.0
+sqlparse==0.5.3
+typing_extensions==4.12.2
+whitenoise==6.9.0
